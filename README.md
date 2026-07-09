@@ -101,8 +101,11 @@ bun install
 bun run check   # lint, format, typecheck, test, build, package-shape checks
 ```
 
-Releases are cut by tagging and publishing a release whose tag matches the
-`version` field in `package.json`.
+Releases are automated: every merged commit updates a standing release pull
+request with the next version and changelog entry, computed from [Conventional
+Commits](https://www.conventionalcommits.org/). Merging that pull request tags
+and publishes a release, which triggers the npm publish workflow. Nobody hand-
+bumps `version` or writes `CHANGELOG.md` entries.
 
 ## License
 
