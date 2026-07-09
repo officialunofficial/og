@@ -1,0 +1,4 @@
+# Supply-chain posture mirrors the source workspace: text lockfile,
+# dependency lifecycle scripts stay blocked by the default.
+[install]
+saveTextLockfile = true
