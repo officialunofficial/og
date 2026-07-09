@@ -1,0 +1,54 @@
+name: Publish to npm
+
+# Manual fallback, independent of the release-please-driven publish job.
+# Useful for a one-off re-publish if that path is ever broken, and mirrors
+# the pattern already proven in officialunofficial/react-native-passkeys.
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Run npm publish with --dry-run (no registry write)."
+        required: false
+        default: false
+        type: boolean
+
+# One publish at a time, never cancelled mid-flight — npm publishes aren't
+# safely interruptable.
+concurrency:
+  group: publish-npm
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  # OIDC: npm exchanges this token for a short-lived publish credential via
+  # the Trusted Publisher configured on @officialunofficial/og. No NPM_TOKEN
+  # secret needed; every publish also gets a signed provenance attestation.
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - run: bun install --frozen-lockfile
+      - run: bun run test
+      - run: bun run build
+      - run: bun run lint:pkg
+      # Trusted Publisher OIDC needs npm >= 11.5.1. `npm install -g npm@latest`
+      # can hit a self-upgrade bug (missing promise-retry in the reify path),
+      # so run the latest npm ephemerally via npx instead.
+      - name: Publish
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            npx -y npm@latest publish --provenance --access public --dry-run
+          else
+            npx -y npm@latest publish --provenance --access public
+          fi

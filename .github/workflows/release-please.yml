@@ -32,6 +32,11 @@ jobs:
     needs: release-please
     if: ${{ needs.release-please.outputs.release_created }}
     runs-on: ubuntu-latest
+    # One publish at a time, never cancelled mid-flight — npm publishes aren't
+    # safely interruptable.
+    concurrency:
+      group: publish-npm
+      cancel-in-progress: false
     permissions:
       contents: read
       id-token: write # OIDC for npm trusted publishing
@@ -46,9 +51,10 @@ jobs:
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
-      # Trusted publishing needs a recent npm CLI; the runner's default may lag.
-      - run: npm install -g npm@latest
       - run: bun install --frozen-lockfile
       - run: bun run test
       - run: bun run build
-      - run: npm publish --access public
+      # Trusted Publisher OIDC needs npm >= 11.5.1. `npm install -g npm@latest`
+      # can hit a self-upgrade bug (missing promise-retry in the reify path),
+      # so run the latest npm ephemerally via npx instead.
+      - run: npx -y npm@latest publish --provenance --access public
