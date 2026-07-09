@@ -9,6 +9,11 @@ typed API: a declarative flex-box DSL for building card markup, plus helpers
 for loading fonts, inlining assets as data URIs, and turning markup into a
 cache-headered PNG response.
 
+The main entry point (`@officialunofficial/og`) is pure JS with no runtime
+dependencies — safe to import in a plain test environment. Render plumbing
+that loads `workers-og` lives at the `@officialunofficial/og/render` subpath,
+so code that only builds card markup (and its tests) never pays for it.
+
 ## Install
 
 ```sh
@@ -21,7 +26,8 @@ into your worker.
 ## Quick start
 
 ```ts
-import { loadGoogleFonts, OG_HEIGHT, OG_WIDTH, renderOgImage, Text, VStack } from "@officialunofficial/og";
+import { Text, VStack } from "@officialunofficial/og";
+import { loadGoogleFonts, OG_HEIGHT, OG_WIDTH, renderOgImage } from "@officialunofficial/og/render";
 
 export default {
   async fetch(request: Request): Promise<Response> {
@@ -68,19 +74,24 @@ Numeric style values get a `px` suffix, except for a small unitless set
 
 ## Helpers
 
+From `@officialunofficial/og/render` (loads the `workers-og` renderer):
+
 - `renderOgImage(html, options)` — renders card markup to a PNG `Response`
   with `Content-Type` and `Cache-Control` set. `options.scale` multiplies the
   pixel dimensions only; bake the same scale into your own font sizes and
   offsets.
 - `loadGoogleFonts(specs)` — fetches font variants in parallel and shapes them
   for `renderOgImage`.
+- `OG_WIDTH` / `OG_HEIGHT` — the standard 1200×630 card size in CSS pixels.
+
+From `@officialunofficial/og` (pure JS, no renderer dependency):
+
 - `svgToDataUri(svg)` / `toDataUri(mimeType, data)` — inline assets as data
   URIs. The renderer can't fetch remote images on these runtimes, so every
   image needs to already be a data URI.
 - `stopColors(svg)` — extracts `stop-color` values from an SVG in document
   order, so a card can derive an accent palette straight from a logo.
 - `truncate(text, max)` — caps text on a word boundary with an ellipsis.
-- `OG_WIDTH` / `OG_HEIGHT` — the standard 1200×630 card size in CSS pixels.
 
 ## Example
 

@@ -1,14 +1,5 @@
-import {
-  Box,
-  HStack,
-  loadGoogleFonts,
-  OG_HEIGHT,
-  OG_WIDTH,
-  renderOgImage,
-  Text,
-  truncate,
-  VStack,
-} from "@officialunofficial/og";
+import { Box, HStack, Text, truncate, VStack } from "@officialunofficial/og";
+import { loadGoogleFonts, OG_HEIGHT, OG_WIDTH, renderOgImage } from "@officialunofficial/og/render";
 
 const SWATCHES: Array<[string, string]> = [
   ["#6366f1", "1"],
