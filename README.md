@@ -45,6 +45,14 @@ consumes. Every box declares `display:flex` — the renderer rejects any `<div>`
 with more than one child that doesn't, so this makes that class of bug
 structurally impossible.
 
+<img src="docs/example.png" alt="An HStack laying three colored swatches out in a row, and a VStack stacking the same three swatches in a column" width="480" />
+
+`HStack` and `VStack` are the same `Box` primitive with a different default
+`flexDirection` — `HStack` lays children out left to right, `VStack` stacks
+them top to bottom. The image above is rendered by `examples/worker`'s
+`/diagram` route; regenerate it with `bun run dev` in that directory and
+`curl -o docs/example.png http://localhost:8787/diagram`.
+
 | Export   | What it is                                        |
 | -------- | -------------------------------------------------- |
 | `Box`    | A flex box with no implied direction.               |
