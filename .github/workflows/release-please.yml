@@ -15,9 +15,13 @@ jobs:
       release_created: ${{ steps.release.outputs.release_created }}
       tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
+      # The org blocks the default GITHUB_TOKEN from creating pull requests, so
+      # this needs a fine-grained PAT scoped to this repo (Contents: write,
+      # Pull requests: write) stored as the RELEASE_PLEASE_TOKEN secret.
       - uses: googleapis/release-please-action@v4
         id: release
         with:
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 

@@ -101,11 +101,18 @@ bun install
 bun run check   # lint, format, typecheck, test, build, package-shape checks
 ```
 
-Releases are automated: every merged commit updates a standing release pull
-request with the next version and changelog entry, computed from [Conventional
+Releases are automated by [release-please](https://github.com/googleapis/release-please):
+every merged commit updates a standing release pull request with the next
+version and changelog entry, computed from [Conventional
 Commits](https://www.conventionalcommits.org/). Merging that pull request tags
-and publishes a release, which triggers the npm publish workflow. Nobody hand-
-bumps `version` or writes `CHANGELOG.md` entries.
+and publishes a release, which runs the npm publish job in the same workflow
+run. Nobody hand-bumps `version` or writes `CHANGELOG.md` entries.
+
+This requires a one-time repo setup: a fine-grained personal access token
+scoped to this repo (`Contents: write`, `Pull requests: write`), stored as the
+`RELEASE_PLEASE_TOKEN` secret. The org blocks the default `GITHUB_TOKEN` from
+creating pull requests, and even without that restriction, a `GITHUB_TOKEN`-
+authored release doesn't trigger other workflow runs — the PAT sidesteps both.
 
 ## License
 
