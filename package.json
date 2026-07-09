@@ -1,6 +1,6 @@
 {
   "name": "@officialunofficial/og",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Primitives for rendering Open Graph card images on Fetch-API edge runtimes. Each product brings its own design.",
   "license": "(MIT OR Apache-2.0)",
   "repository": {

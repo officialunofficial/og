@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.3.0](https://github.com/officialunofficial/og/compare/v0.2.0...v0.3.0) (2026-07-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* renderOgImage, loadGoogleFonts, OG_WIDTH, and OG_HEIGHT moved from the package root to the "/render" subpath.
+
+### Bug Fixes
+
+* split render plumbing into a separate entry point ([625a2c6](https://github.com/officialunofficial/og/commit/625a2c68c500ab23d0276331e63231f6b630f2b6))
+
 ## [0.2.0](https://github.com/officialunofficial/og/compare/v0.1.0...v0.2.0) (2026-07-09)
 
 
