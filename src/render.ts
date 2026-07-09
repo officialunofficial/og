@@ -5,13 +5,13 @@ export const OG_WIDTH = 1200;
 /** The standard Open Graph card size in CSS pixels. */
 export const OG_HEIGHT = 630;
 
-/** A web font family + weight to load for rendering. */
+/** A web font family and weight to load for rendering. */
 export type FontSpec = { family: string; weight: number };
 
 /** A loaded font ready to hand to the renderer. */
 export type LoadedFont = { name: string; data: ArrayBuffer; weight: number; style: "normal" };
 
-/** Fetches the given font variants in parallel. */
+/** Fetches the given font variants in parallel, resolving to their loaded font data. */
 export async function loadGoogleFonts(specs: readonly FontSpec[]): Promise<LoadedFont[]> {
   return Promise.all(
     specs.map(async ({ family, weight }) => ({

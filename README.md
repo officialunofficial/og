@@ -55,7 +55,7 @@ structurally impossible.
 
 `HStack` and `VStack` are the same `Box` primitive with a different default
 `flexDirection` — `HStack` lays children out left to right, `VStack` stacks
-them top to bottom. The image above is rendered by `examples/worker`'s
+them top to bottom. The image above is rendered by **examples/worker**'s
 `/diagram` route; regenerate it with `bun run dev` in that directory and
 `curl -o docs/example.png http://localhost:8787/diagram`.
 
@@ -64,7 +64,7 @@ them top to bottom. The image above is rendered by `examples/worker`'s
 | `Box`    | A flex box with no implied direction.               |
 | `VStack` | A flex column (`flex-direction: column`).           |
 | `HStack` | A flex row, vertically centered by default.         |
-| `Text`   | A text run; content is HTML-escaped for you.        |
+| `Text`   | A text run that HTML-escapes its content for you.   |
 | `Img`    | An image; `src` should already be a data URI.       |
 
 Numeric style values get a `px` suffix, except for a small unitless set
@@ -82,11 +82,11 @@ From `@officialunofficial/og/render` (loads the `workers-og` renderer):
   offsets.
 - `loadGoogleFonts(specs)` — fetches font variants in parallel and shapes them
   for `renderOgImage`.
-- `OG_WIDTH` / `OG_HEIGHT` — the standard 1200×630 card size in CSS pixels.
+- `OG_WIDTH`/`OG_HEIGHT` — the standard 1200×630 card size in CSS pixels.
 
 From `@officialunofficial/og` (pure JS, no renderer dependency):
 
-- `svgToDataUri(svg)` / `toDataUri(mimeType, data)` — inline assets as data
+- `svgToDataUri(svg)`/`toDataUri(mimeType, data)` — inline assets as data
   URIs. The renderer can't fetch remote images on these runtimes, so every
   image needs to already be a data URI.
 - `stopColors(svg)` — extracts `stop-color` values from an SVG in document
@@ -95,7 +95,7 @@ From `@officialunofficial/og` (pure JS, no renderer dependency):
 
 ## Example
 
-A brand-neutral, fully working worker lives in `examples/worker/`:
+A brand-neutral, fully working worker lives in **examples/worker/**:
 
 ```sh
 bun run build
@@ -109,7 +109,7 @@ bun run dev
 
 ```sh
 bun install
-bun run check   # lint, format, typecheck, test, build, package-shape checks
+bun run check   # lint, format, typecheck, test, build, and package-shape checks
 ```
 
 Releases are automated by [release-please](https://github.com/googleapis/release-please):
@@ -117,7 +117,7 @@ every merged commit updates a standing release pull request with the next
 version and changelog entry, computed from [Conventional
 Commits](https://www.conventionalcommits.org/). Merging that pull request tags
 and publishes a release, which runs the npm publish job in the same workflow
-run. Nobody hand-bumps `version` or writes `CHANGELOG.md` entries.
+run. Nobody hand-bumps `version` or writes **CHANGELOG.md** entries.
 
 This requires a one-time repo setup: a fine-grained personal access token
 scoped to this repo (`Contents: write`, `Pull requests: write`), stored as the

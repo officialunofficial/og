@@ -48,8 +48,8 @@ function escapeHtml(str: string): string {
     .replace(/"/g, "&quot;");
 }
 
-// `display:flex` is prefixed so a caller-supplied `display` (e.g. "none") still
-// wins via inline-style last-declaration-wins.
+// `display:flex` is prefixed so a caller-supplied `display` (for example,
+// "none") still wins via inline-style last-declaration-wins.
 function box(style: Style, children: string[]): string {
   return `<div style="display:flex;${serialize(style)}">${children.join("")}</div>`;
 }
@@ -65,7 +65,7 @@ export const VStack = (style: Style, ...children: string[]): string =>
 export const HStack = (style: Style, ...children: string[]): string =>
   box({ flexDirection: "row", alignItems: "center", ...style }, children);
 
-/** A text run. The content is HTML-escaped for you. */
+/** A text run. HTML-escapes the content for you. */
 export const Text = (style: Style, text: string): string => box(style, [escapeHtml(text)]);
 
 /** An image. `src` should already be a data URI (the renderer can't fetch remote images on edge runtimes). */
