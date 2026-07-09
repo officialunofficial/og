@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/officialunofficial/og/compare/v0.3.0...v0.3.1) (2026-07-09)
+
+
+### Bug Fixes
+
+* **ci:** pin npm to the 11.x line for publish ([ede5fe6](https://github.com/officialunofficial/og/commit/ede5fe62d858fd55039c71f5da0ce57de2898311))
+
 ## [0.3.0](https://github.com/officialunofficial/og/compare/v0.2.0...v0.3.0) (2026-07-09)
 
 
