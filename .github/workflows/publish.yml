@@ -42,13 +42,16 @@ jobs:
       - run: bun run test
       - run: bun run build
       - run: bun run lint:pkg
-      # Trusted Publisher OIDC needs npm >= 11.5.1. `npm install -g npm@latest`
-      # can hit a self-upgrade bug (missing promise-retry in the reify path),
-      # so run the latest npm ephemerally via npx instead.
+      # Trusted Publisher OIDC needs npm >= 11.5.1, and `--provenance` needs a
+      # working `sigstore` dependency — `npm@latest` currently resolves to a
+      # 12.x prerelease that's missing it (npm/cli#9722), and
+      # `npm install -g npm@latest` can also hit a self-upgrade bug (missing
+      # promise-retry in the reify path). Pin the 11.x line and run it
+      # ephemerally via npx.
       - name: Publish
         run: |
           if [ "${{ inputs.dry_run }}" = "true" ]; then
-            npx -y npm@latest publish --provenance --access public --dry-run
+            npx -y npm@11 publish --provenance --access public --dry-run
           else
-            npx -y npm@latest publish --provenance --access public
+            npx -y npm@11 publish --provenance --access public
           fi
