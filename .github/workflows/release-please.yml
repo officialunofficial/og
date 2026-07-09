@@ -11,9 +11,6 @@ permissions:
 jobs:
   release-please:
     runs-on: ubuntu-latest
-    outputs:
-      release_created: ${{ steps.release.outputs.release_created }}
-      tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
       # The org blocks the default GITHUB_TOKEN from creating pull requests, so
       # this needs a fine-grained PAT scoped to this repo (Contents: write,
@@ -25,39 +22,6 @@ jobs:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
-  # release-please creates the tag/release with the default GITHUB_TOKEN, and
-  # tokens don't trigger other workflows — so publishing happens as a second
-  # job here rather than a separate workflow listening for `release: published`.
-  publish:
-    needs: release-please
-    if: ${{ needs.release-please.outputs.release_created }}
-    runs-on: ubuntu-latest
-    # One publish at a time, never cancelled mid-flight — npm publishes aren't
-    # safely interruptable.
-    concurrency:
-      group: publish-npm
-      cancel-in-progress: false
-    permissions:
-      contents: read
-      id-token: write # OIDC for npm trusted publishing
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.release-please.outputs.tag_name }}
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: 1.3.14
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          registry-url: https://registry.npmjs.org
-      - run: bun install --frozen-lockfile
-      - run: bun run test
-      - run: bun run build
-      # Trusted Publisher OIDC needs npm >= 11.5.1, and `--provenance` needs a
-      # working `sigstore` dependency — `npm@latest` currently resolves to a
-      # 12.x prerelease that's missing it (npm/cli#9722), and
-      # `npm install -g npm@latest` can also hit a self-upgrade bug (missing
-      # promise-retry in the reify path). Pin the 11.x line and run it
-      # ephemerally via npx.
-      - run: npx -y npm@11 publish --provenance --access public
+  # Publishing to npm is a separate, manually-triggered step — see
+  # publish.yml. Keeping one workflow file as the sole npm publisher means
+  # only one Trusted Publisher entry to configure and keep in sync.

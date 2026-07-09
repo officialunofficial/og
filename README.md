@@ -112,18 +112,23 @@ bun install
 bun run check   # lint, format, typecheck, test, build, and package-shape checks
 ```
 
-Releases are automated by [release-please](https://github.com/googleapis/release-please):
-every merged commit updates a standing release pull request with the next
-version and changelog entry, computed from [Conventional
+Versioning and changelog entries are automated by
+[release-please](https://github.com/googleapis/release-please): every merged
+commit updates a standing release pull request with the next version and
+changelog entry, computed from [Conventional
 Commits](https://www.conventionalcommits.org/). Merging that pull request tags
-and publishes a release, which runs the npm publish job in the same workflow
-run. Nobody hand-bumps `version` or writes **CHANGELOG.md** entries.
+and publishes a release. Nobody hand-bumps `version` or writes
+**CHANGELOG.md** entries.
+
+Publishing to npm is a separate, manually-triggered step: run the "Publish to
+npm" GitHub Action after reviewing a release. Keeping it manual means a human
+decides when a version actually ships, and it keeps the repo down to one
+Trusted Publisher entry to configure and keep in sync.
 
 This requires a one-time repo setup: a fine-grained personal access token
 scoped to this repo (`Contents: write`, `Pull requests: write`), stored as the
-`RELEASE_PLEASE_TOKEN` secret. The org blocks the default `GITHUB_TOKEN` from
-creating pull requests, and even without that restriction, a `GITHUB_TOKEN`-
-authored release doesn't trigger other workflow runs — the PAT sidesteps both.
+`RELEASE_PLEASE_TOKEN` secret, so release-please can open its pull request —
+the org blocks the default `GITHUB_TOKEN` from creating pull requests.
 
 ## License
 
