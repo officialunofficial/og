@@ -1,6 +1,6 @@
 {
   "name": "@officialunofficial/og",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Primitives for rendering Open Graph card images on Fetch-API edge runtimes. Each product brings its own design.",
   "license": "(MIT OR Apache-2.0)",
   "repository": {
@@ -16,8 +16,17 @@
     },
     "./package.json": "./package.json"
   },
-  "files": ["dist", "LICENSE-MIT", "LICENSE-APACHE"],
-  "keywords": ["open-graph", "og-image", "edge-runtime", "social-card"],
+  "files": [
+    "dist",
+    "LICENSE-MIT",
+    "LICENSE-APACHE"
+  ],
+  "keywords": [
+    "open-graph",
+    "og-image",
+    "edge-runtime",
+    "social-card"
+  ],
   "packageManager": "bun@1.3.14",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
