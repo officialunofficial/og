@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/officialunofficial/og/compare/v0.4.0...v0.5.0) (2026-11-08)
+
+
+### Features
+
+* support the complete Open Graph metadata vocabulary ([#6](https://github.com/officialunofficial/og/issues/6)) ([e11dfef](https://github.com/officialunofficial/og/commit/e11dfef03a33df00f47bd64f195ca0f47b057a91))
+
 ## [0.4.0](https://github.com/officialunofficial/og/compare/v0.3.1...v0.4.0) (2026-11-08)
 
 
