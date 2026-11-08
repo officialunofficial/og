@@ -102,7 +102,7 @@ export const OG_NAMESPACES = {
   og: "https://ogp.me/ns#",
   article: "https://ogp.me/ns/article#",
   book: "https://ogp.me/ns/book#",
-  profile: "https://ogp.me/ns/profile#",
+  profile: "http://ogp.me/ns/profile#",
   music: "https://ogp.me/ns/music#",
   video: "https://ogp.me/ns/video#",
   payment: "https://ogp.me/ns/payment#",
