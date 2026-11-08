@@ -23,7 +23,8 @@
   "files": [
     "dist",
     "LICENSE-MIT",
-    "LICENSE-APACHE"
+    "LICENSE-APACHE",
+    "docs/metadata.md"
   ],
   "keywords": [
     "open-graph",

@@ -1,3 +1,6 @@
+import { metaTag as tag } from "./meta-tags.js";
+import { text, mediaUrl, dimension } from "./metadata-values.js";
+
 /** A poster image retained for consumers that do not display video previews. */
 export type OgPoster = {
   url: string;
@@ -26,51 +29,6 @@ export type VideoMetadataOptions = {
   type?: string;
   description?: string;
 };
-
-function escapeAttribute(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
-
-function tag(property: string, content: string | number): string {
-  return `<meta property="${property}" content="${escapeAttribute(String(content))}" />`;
-}
-
-function text(value: string, name: string): string {
-  if (!value.trim()) throw new TypeError(`${name} must not be empty`);
-  return value;
-}
-
-function mediaUrl(value: string, name: string, secure = false): string {
-  let parsed: URL;
-  try {
-    parsed = new URL(value);
-  } catch {
-    throw new TypeError(`${name} must be an absolute HTTP(S) URL`);
-  }
-  if (
-    (parsed.protocol !== "https:" && (secure || parsed.protocol !== "http:")) ||
-    !/^https?:\/\//i.test(value) ||
-    parsed.username ||
-    parsed.password ||
-    Array.from(value).some((char) => char.charCodeAt(0) <= 32 || char.charCodeAt(0) === 127)
-  )
-    throw new TypeError(
-      `${name} must be an absolute ${secure ? "HTTPS" : "HTTP(S)"} URL without credentials or whitespace`,
-    );
-  // Preserve signed URLs byte for byte; escape only when serializing HTML.
-  return value;
-}
-
-function dimension(value: number, name: string): number {
-  if (!Number.isSafeInteger(value) || value <= 0)
-    throw new TypeError(`${name} must be a positive integer`);
-  return value;
-}
 
 /**
  * Emit Open Graph video metadata for an HTML head, with a required poster fallback.

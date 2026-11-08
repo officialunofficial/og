@@ -1,6 +1,6 @@
 # og
 
-Primitives for rendering Open Graph card images on Fetch-API edge runtimes. Each
+Primitives for Open Graph metadata and card images on Fetch-API edge runtimes. Each
 product brings its own design — this package supplies the layout DSL and the
 render plumbing, not a themed card.
 
@@ -43,6 +43,35 @@ export default {
   },
 };
 ```
+
+## Complete Open Graph metadata
+
+Use `openGraphMetaTags()` for websites, articles, books, profiles, music, video
+objects, and the beta payment-link vocabulary. It includes multiple images,
+video/audio formats, locales, structured references, and custom namespaces.
+The renderer-free entry point also exports `metaTags()` for explicit low-level
+properties and `OG_PROPERTIES` / `OG_NAMESPACES` for the vocabulary inventory.
+
+```ts
+import { openGraphMetaTags } from "@officialunofficial/og";
+
+const metadata = openGraphMetaTags({
+  title: "Store it. Share it.",
+  url: "https://blob.uno.fun/",
+  siteName: "Uno Blob",
+  locale: "en_US",
+  images: [{
+    url: "https://blob.uno.fun/assets/share.png",
+    alt: "Blob wordmark and Lagoon symbol",
+    width: 1200,
+    height: 630,
+  }],
+});
+```
+
+See the [complete metadata guide](docs/metadata.md) for every supported field,
+object type, validation rule, namespace declaration, and platform boundary.
+The focused video helper below remains compatible with 0.4.0.
 
 ## Video previews
 
