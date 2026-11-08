@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/officialunofficial/og/compare/v0.3.1...v0.4.0) (2026-11-08)
+
+
+### Features
+
+* add Open Graph video metadata helpers ([#4](https://github.com/officialunofficial/og/issues/4)) ([eba6301](https://github.com/officialunofficial/og/commit/eba6301958f23f49592a2ff57546b2deb27ae116))
+
 ## [0.3.1](https://github.com/officialunofficial/og/compare/v0.3.0...v0.3.1) (2026-07-09)
 
 
