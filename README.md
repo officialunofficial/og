@@ -44,6 +44,56 @@ export default {
 };
 ```
 
+## Video previews
+
+`videoMetaTags` builds metadata for an HTML page that links to a hosted video.
+It is exported from the renderer-free main entry point:
+
+```ts
+import { videoMetaTags } from "@officialunofficial/og";
+
+const metadata = videoMetaTags({
+  title: "Store it. Share it.",
+  url: "https://blob.uno.fun/",
+  description: "File storage for agents.",
+  image: {
+    url: "https://blob.uno.fun/assets/share.png",
+    alt: "Blob wordmark with the Lagoon symbol",
+    type: "image/png",
+    width: 1200,
+    height: 630,
+  },
+  videos: [
+    {
+      url: "https://blob.uno.fun/assets/preview.mp4",
+      type: "video/mp4",
+      width: 1200,
+      height: 630,
+    },
+  ],
+});
+// Insert metadata into the page's <head>, replacing equivalent existing OG tags.
+```
+
+These URLs illustrate a future video setup; the library does not create or host
+those assets. Use `renderOgImage` for the poster and supply a separately encoded
+video. The helper emits `og:title`, `og:type` (default `website`), `og:url`, the
+poster image properties, and `og:video` with its MIME type and pixel dimensions.
+Set `type: "video.other"` for a page whose primary content is a video, rather
+than a website with an accompanying preview.
+
+List alternate video formats in preference order. Each source's structured
+properties follow its root tag, as required by the [Open Graph protocol](https://ogp.me/#array).
+Both images and videos accept an optional `secureUrl`, which must use HTTPS.
+URLs must be absolute HTTP(S) URLs without embedded credentials or whitespace;
+dimensions must be positive integers. Text and attribute values are HTML-escaped,
+and signed URLs retain their original spelling and query order.
+
+The poster remains required for consumers that do not show video. Playback,
+autoplay, and platform-specific player cards depend on the sharing service;
+`og:video` metadata alone does not guarantee them. This helper adds no video
+encoding, network requests, or renderer dependency.
+
 ## Primitives
 
 A tiny declarative layout DSL that emits the HTML string the renderer
