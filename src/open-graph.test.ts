@@ -610,6 +610,14 @@ describe("Custom namespaces and low-level tags", () => {
       "video",
       "payment",
     ]);
-    expect(OG_NAMESPACES.og).toBe("https://ogp.me/ns#");
+    expect(OG_NAMESPACES).toEqual({
+      og: "https://ogp.me/ns#",
+      article: "https://ogp.me/ns/article#",
+      book: "https://ogp.me/ns/book#",
+      profile: "http://ogp.me/ns/profile#",
+      music: "https://ogp.me/ns/music#",
+      video: "https://ogp.me/ns/video#",
+      payment: "https://ogp.me/ns/payment#",
+    });
   });
 });

@@ -34,7 +34,7 @@ const tags = openGraphMetaTags({
 
 Insert `tags` in the document's `<head>`, replacing existing equivalent OG tags. `type` defaults to `website`. The title and canonical page URL are required. At least one image is required even when the page also has video or audio. Every image needs an `alt` string; it may be empty when that is intentional.
 
-Declare RDFa prefixes on the document's `<html>` element. For a website, use `prefix="og: https://ogp.me/ns#"`. For an article, add `article: https://ogp.me/ns/article#`. `OG_NAMESPACES` supplies the standard URIs. Custom vocabularies need their own prefix declarations.
+Declare RDFa prefixes on the document's `<html>` element. For a website, use `prefix="og: https://ogp.me/ns#"`. For an article, add `article: https://ogp.me/ns/article#`. `OG_NAMESPACES` supplies the standard URIs. The profile namespace retains the specification’s `http://ogp.me/ns/profile#` spelling; namespace identifiers are preserved rather than rewritten as fetch URLs. Custom vocabularies need their own prefix declarations.
 
 ## Property inventory
 
