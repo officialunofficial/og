@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/officialunofficial/og/compare/v0.5.0...v0.5.1) (2026-11-08)
+
+
+### Bug Fixes
+
+* preserve the documented profile namespace URI ([#8](https://github.com/officialunofficial/og/issues/8)) ([f59c8cb](https://github.com/officialunofficial/og/commit/f59c8cbb880f2421732ca1c351f2bd34878deeb8))
+
 ## [0.5.0](https://github.com/officialunofficial/og/compare/v0.4.0...v0.5.0) (2026-11-08)
 
 
