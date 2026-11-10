@@ -79,9 +79,14 @@ let renderer: Promise<Renderer> | undefined;
 const registeredFonts = new WeakSet<ArrayBuffer>();
 
 function getRenderer(): Promise<Renderer> {
-  renderer ??= init({ module_or_path: wasmModule }).then(() => new Renderer());
-  renderer.catch(() => (renderer = undefined));
-  return renderer;
+  if (renderer) return renderer;
+  const ready = init({ module_or_path: wasmModule }).then(() => new Renderer());
+  // A failed init is dropped so the next render retries it.
+  ready.catch(() => {
+    if (renderer === ready) renderer = undefined;
+  });
+  renderer = ready;
+  return ready;
 }
 
 /**

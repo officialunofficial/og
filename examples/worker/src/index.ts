@@ -92,7 +92,7 @@ async function bench(runs: number): Promise<Response> {
     warmP95Ms: pick(0.95),
     runs,
     pngBytes: bytes,
-    note: "Workers clocks only advance on I/O; compare deployed numbers, not just wrangler dev.",
+    note: "Deployed Workers clocks do not advance during CPU work, so render times read 0 there. Time requests from the client, or read CPU time in Workers observability.",
   });
 }
 
