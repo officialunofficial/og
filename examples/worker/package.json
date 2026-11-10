@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@officialunofficial/og": "link:@officialunofficial/og",
-    "workers-og": "^0.0.27"
+    "@takumi-rs/wasm": "^2.20.0"
   },
   "devDependencies": {
     "typescript": "^7.0.2",

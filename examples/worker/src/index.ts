@@ -1,4 +1,4 @@
-import { Box, HStack, Text, truncate, VStack } from "@officialunofficial/og";
+import { Box, cachedResponse, HStack, Text, truncate, VStack } from "@officialunofficial/og";
 import { loadGoogleFonts, OG_HEIGHT, OG_WIDTH, renderOgImage } from "@officialunofficial/og/render";
 
 const SWATCHES: Array<[string, string]> = [
@@ -60,45 +60,98 @@ async function renderDiagram(): Promise<Response> {
   return renderOgImage(html, { fonts, width: WIDTH, height: HEIGHT });
 }
 
+/** Times each render stage so speed claims stay checkable: `GET /bench?runs=20`. */
+async function bench(runs: number): Promise<Response> {
+  const html = VStack(
+    { width: OG_WIDTH, height: OG_HEIGHT, padding: 60, backgroundColor: "#101014" },
+    Text({ fontSize: 64, fontWeight: 700, color: "#fafafa" }, "Benchmark card"),
+  );
+  const stage = async <T>(fn: () => Promise<T>): Promise<[T, number]> => {
+    const start = performance.now();
+    const value = await fn();
+    return [value, performance.now() - start];
+  };
+
+  const [fonts, fontMs] = await stage(() => loadGoogleFonts([{ family: "Inter", weight: 700 }]));
+  const times: number[] = [];
+  let bytes = 0;
+  // Sequential on purpose: each run must not overlap the previous one.
+  // oxlint-disable-next-line no-await-in-loop
+  for (let i = 0; i < runs; i++) {
+    const [res, ms] = await stage(() => renderOgImage(html, { fonts }));
+    bytes = (await res.arrayBuffer()).byteLength;
+    times.push(ms);
+  }
+  const [cold = 0, ...warm] = times;
+  warm.sort((a, b) => a - b);
+  const pick = (p: number) => warm[Math.min(warm.length - 1, Math.floor(warm.length * p))] ?? 0;
+  return Response.json({
+    fontMs,
+    coldRenderMs: cold,
+    warmP50Ms: pick(0.5),
+    warmP95Ms: pick(0.95),
+    runs,
+    pngBytes: bytes,
+    note: "Workers clocks only advance on I/O; compare deployed numbers, not just wrangler dev.",
+  });
+}
+
+async function renderCard(url: URL): Promise<Response> {
+  const title = url.searchParams.get("title") ?? "Hello from the example worker";
+  const description = truncate(
+    url.searchParams.get("description") ?? "A card composed from the layout primitives.",
+    160,
+  );
+
+  const html = VStack(
+    {
+      position: "relative",
+      width: OG_WIDTH,
+      height: OG_HEIGHT,
+      padding: 60,
+      backgroundColor: "#101014",
+      fontFamily: "'Inter', sans-serif",
+    },
+    Text({ fontSize: 64, fontWeight: 700, color: "#fafafa", lineHeight: 1.1 }, title),
+    Text({ marginTop: 24, fontSize: 30, fontWeight: 400, color: "#a1a1aa" }, description),
+    Box({
+      position: "absolute",
+      left: 60,
+      bottom: 44,
+      width: OG_WIDTH - 120,
+      height: 6,
+      backgroundImage: "linear-gradient(90deg, #38bdf8, #a78bfa)",
+    }),
+  );
+
+  const fonts = await loadGoogleFonts([
+    { family: "Inter", weight: 400 },
+    { family: "Inter", weight: 700 },
+  ]);
+  return renderOgImage(html, { fonts });
+}
+
 export default {
-  async fetch(request: Request): Promise<Response> {
+  async fetch(
+    request: Request,
+    _env: unknown,
+    ctx: { waitUntil(promise: Promise<unknown>): void },
+  ): Promise<Response> {
     const url = new URL(request.url);
+
+    if (url.pathname === "/bench") {
+      return bench(Number(url.searchParams.get("runs") ?? 20));
+    }
 
     if (url.pathname === "/diagram") {
       return renderDiagram();
     }
 
-    const title = url.searchParams.get("title") ?? "Hello from the example worker";
-    const description = truncate(
-      url.searchParams.get("description") ?? "A card composed from the layout primitives.",
-      160,
-    );
-
-    const html = VStack(
-      {
-        position: "relative",
-        width: OG_WIDTH,
-        height: OG_HEIGHT,
-        padding: 60,
-        backgroundColor: "#101014",
-        fontFamily: "'Inter', sans-serif",
-      },
-      Text({ fontSize: 64, fontWeight: 700, color: "#fafafa", lineHeight: 1.1 }, title),
-      Text({ marginTop: 24, fontSize: 30, fontWeight: 400, color: "#a1a1aa" }, description),
-      Box({
-        position: "absolute",
-        left: 60,
-        bottom: 44,
-        width: OG_WIDTH - 120,
-        height: 6,
-        backgroundImage: "linear-gradient(90deg, #38bdf8, #a78bfa)",
-      }),
-    );
-
-    const fonts = await loadGoogleFonts([
-      { family: "Inter", weight: 400 },
-      { family: "Inter", weight: 700 },
-    ]);
-    return renderOgImage(html, { fonts });
+    // Repeat requests skip rendering; stale cards refresh in the background.
+    return cachedResponse(request, () => renderCard(url), {
+      waitUntil: ctx.waitUntil.bind(ctx),
+      maxAge: 3600,
+      staleWhileRevalidate: 86_400,
+    });
   },
 };
