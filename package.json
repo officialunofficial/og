@@ -37,20 +37,28 @@
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "bun check",
     "test": "vitest run",
-    "lint": "oxlint --deny-warnings src examples",
+    "lint": "oxlint --deny-warnings src examples bench",
     "lint:pkg": "publint && attw --pack . --profile esm-only",
-    "verify": "bun run lint && bun fmt --check src examples && bun check && bun run test && bun run build && bun run lint:pkg"
+    "verify": "bun run lint && bun fmt --check src examples bench && bun check && bun run test && bun run build && bun run lint:pkg",
+    "bench": "bun bench/run.ts"
   },
   "peerDependencies": {
-    "@takumi-rs/wasm": ">=2.20.0 <3"
+    "@takumi-rs/wasm": ">=2.20.0 <3",
+    "@takumi-rs/helpers": ">=2.20.0 <3"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.2",
+    "@takumi-rs/helpers": "^2.20.0",
     "@takumi-rs/wasm": "^2.20.0",
     "@types/node": "^26.6.6",
     "oxlint": "^1.71.0",
     "publint": "^0.3.12",
     "typescript": "^7.0.2",
     "vitest": "^4.1.8"
+  },
+  "peerDependenciesMeta": {
+    "@takumi-rs/helpers": {
+      "optional": true
+    }
   }
 }

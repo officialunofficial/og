@@ -60,41 +60,77 @@ async function renderDiagram(): Promise<Response> {
   return renderOgImage(html, { fonts, width: WIDTH, height: HEIGHT });
 }
 
-async function stage<T>(fn: () => Promise<T>): Promise<[T, number]> {
-  const start = performance.now();
-  const value = await fn();
-  return [value, performance.now() - start];
-}
+const SIMPLE_CARD = VStack(
+  { width: OG_WIDTH, height: OG_HEIGHT, padding: 60, backgroundColor: "#101014" },
+  Text({ fontSize: 64, fontWeight: 700, color: "#fafafa" }, "Benchmark card"),
+);
 
-/** Times each render stage so speed claims stay checkable: `GET /bench?runs=20`. */
-async function bench(runs: number): Promise<Response> {
-  const html = VStack(
-    { width: OG_WIDTH, height: OG_HEIGHT, padding: 60, backgroundColor: "#101014" },
-    Text({ fontSize: 64, fontWeight: 700, color: "#fafafa" }, "Benchmark card"),
-  );
-  const [fonts, fontMs] = await stage(() => loadGoogleFonts([{ family: "Inter", weight: 700 }]));
-  const times: number[] = [];
-  let bytes = 0;
-  // Sequential on purpose: each run must not overlap the previous one.
-  /* oxlint-disable no-await-in-loop */
-  for (let i = 0; i < runs; i++) {
-    const [res, ms] = await stage(() => renderOgImage(html, { fonts }));
-    bytes = (await res.arrayBuffer()).byteLength;
-    times.push(ms);
-  }
-  /* oxlint-enable no-await-in-loop */
-  const [cold = 0, ...warm] = times;
-  warm.sort((a, b) => a - b);
-  const pick = (p: number) => warm[Math.min(warm.length - 1, Math.floor(warm.length * p))] ?? 0;
-  return Response.json({
-    fontMs,
-    coldRenderMs: cold,
-    warmP50Ms: pick(0.5),
-    warmP95Ms: pick(0.95),
-    runs,
-    pngBytes: bytes,
-    note: "Deployed Workers clocks do not advance during CPU work, so render times read 0 there. Time requests from the client, or read CPU time in Workers observability.",
-  });
+const RICH_CARD = VStack(
+  {
+    width: OG_WIDTH,
+    height: OG_HEIGHT,
+    padding: 60,
+    gap: 24,
+    backgroundImage: "linear-gradient(135deg, #101014, #312e81)",
+  },
+  Text({ fontSize: 64, fontWeight: 700, color: "#fafafa" }, "Gradients and shadows on the edge"),
+  Text(
+    { fontSize: 30, color: "#a1a1aa" },
+    "A longer description that wraps across several lines. ".repeat(3),
+  ),
+  HStack(
+    { gap: 16 },
+    ...[1, 2, 3, 4, 5, 6].map((i) =>
+      Box({
+        width: 120,
+        height: 120,
+        borderRadius: 20,
+        backgroundColor: `hsl(${i * 50}, 70%, 55%)`,
+        boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
+      }),
+    ),
+  ),
+);
+
+const FLAT_CARD = VStack(
+  {
+    width: OG_WIDTH,
+    height: OG_HEIGHT,
+    padding: 60,
+    gap: 24,
+    backgroundColor: "#1b1b3a",
+  },
+  Text({ fontSize: 64, fontWeight: 700, color: "#fafafa" }, "Flat colors on the edge"),
+  Text(
+    { fontSize: 30, color: "#a1a1aa" },
+    "A longer description that wraps across several lines. ".repeat(3),
+  ),
+  HStack(
+    { gap: 16 },
+    ...[1, 2, 3, 4, 5, 6].map((i) =>
+      Box({
+        width: 120,
+        height: 120,
+        borderRadius: 20,
+        backgroundColor: `hsl(${i * 50}, 70%, 55%)`,
+      }),
+    ),
+  ),
+);
+
+/**
+ * Renders a fixed benchmark card with no caching: `GET /bench?card=rich|flat|simple&format=webp`.
+ * Workers clocks only advance on I/O, so time the request from the client.
+ */
+async function renderBench(url: URL): Promise<Response> {
+  const fonts = await loadGoogleFonts([
+    { family: "Inter", weight: 400 },
+    { family: "Inter", weight: 700 },
+  ]);
+  const card = url.searchParams.get("card");
+  const html = card === "rich" ? RICH_CARD : card === "flat" ? FLAT_CARD : SIMPLE_CARD;
+  const format = url.searchParams.get("format") === "webp" ? "webp" : "png";
+  return renderOgImage(html, { fonts, format });
 }
 
 async function renderCard(url: URL): Promise<Response> {
@@ -141,7 +177,7 @@ export default {
     const url = new URL(request.url);
 
     if (url.pathname === "/bench") {
-      return bench(Number(url.searchParams.get("runs") ?? 20));
+      return renderBench(url);
     }
 
     if (url.pathname === "/diagram") {

@@ -47,6 +47,42 @@ export default {
 
 A working worker lives in [examples/worker](examples/worker).
 
+## Fonts and emoji
+
+The renderer bundles no fonts. Load one font for each script you draw. Latin,
+Japanese, Chinese and Arabic text render correctly with a matching Google Font,
+including right-to-left layout. Hangul stays empty until you load a Korean font.
+
+The renderer has no emoji font either. Without help, emoji show as empty boxes.
+Set `emoji` to draw them as images from a CDN:
+
+```ts
+await renderOgImage(html, { fonts, emoji: "twemoji" });
+```
+
+Install the optional peer dependency first: `bun add @takumi-rs/helpers`. The
+first render fetches the emoji images, so cache the response.
+
+## Speed
+
+These timings come from `bun run bench` on `workerd`. Each is the p50 request time for a
+1200×630 card on a laptop.
+
+| Card | p50 | Size |
+| --- | ---: | ---: |
+| Simple text card, PNG | 4.4 ms | 4 KB |
+| Flat colors, six tiles and wrapped text, PNG | 5.8 ms | 16 KB |
+| Same layout with gradients and shadows, PNG | 15.4 ms | 90 KB |
+| Same layout with gradients and shadows, WebP | 10.3 ms | 163 KB |
+
+Most of the render time is PNG encoding, and gradients make it much slower.
+
+- Cache the response with `cachedResponse`. A cache hit costs no render time.
+- Prefer flat colors. They render 2.7 times faster than gradients and shadows.
+- Keep `scale` at 1 unless you need Retina output. `scale: 2` costs about 3 times more.
+- `format: "webp"` encodes faster but the wasm build writes lossless files. They are larger
+  than PNG and some crawlers do not read WebP.
+
 ## Caching
 
 Rendering costs 5–30 ms of CPU; a cache hit costs none. `cachedResponse` serves

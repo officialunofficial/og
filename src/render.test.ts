@@ -107,4 +107,24 @@ describe("renderOgImage", () => {
     const bytes = new Uint8Array(await res.arrayBuffer());
     expect(String.fromCharCode(...Array.from(bytes.subarray(0, 4)))).toBe("RIFF");
   });
+
+  it("fetches emoji images when the emoji option is set", async () => {
+    const svg =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36"><circle cx="18" cy="18" r="16" fill="#e0245e"/></svg>';
+    const fetchMock = vi.fn(
+      async () => new Response(svg, { headers: { "Content-Type": "image/svg+xml" } }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    const html = VStack(
+      { width: OG_WIDTH, height: OG_HEIGHT, fontSize: 72, backgroundColor: "#101014" },
+      "🚀",
+    );
+    const res = await renderOgImage(html, { fonts: [], emoji: "twemoji" });
+    expect(res.headers.get("Content-Type")).toBe("image/png");
+    expect(pngSize(new Uint8Array(await res.arrayBuffer()))).toEqual({ width: 1200, height: 630 });
+
+    const urls = fetchMock.mock.calls.map((call) => String((call as unknown[])[0]));
+    expect(urls.some((url) => url.includes("twemoji") && url.endsWith("1f680.svg"))).toBe(true);
+  });
 });
