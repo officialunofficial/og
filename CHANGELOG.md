@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.6.0](https://github.com/officialunofficial/og/compare/v0.5.1...v0.6.0) (2026-11-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* the peer dependency is now @takumi-rs/wasm instead of workers-og, and scale sets the device pixel ratio so layout and font sizes stay in CSS pixels.
+
+### Features
+
+* replace workers-og with Takumi wasm renderer ([#10](https://github.com/officialunofficial/og/issues/10)) ([6d9d035](https://github.com/officialunofficial/og/commit/6d9d03525d330693623142c632ca478b40191152))
+
 ## [0.5.1](https://github.com/officialunofficial/og/compare/v0.5.0...v0.5.1) (2026-11-08)
 
 
