@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/officialunofficial/og/compare/v0.6.0...v0.6.1) (2026-11-10)
+
+
+### Bug Fixes
+
+* retry a failed wasm init and correct the bench note ([#12](https://github.com/officialunofficial/og/issues/12)) ([9458ae8](https://github.com/officialunofficial/og/commit/9458ae8e5103799b9833f09d228637dba44a5097))
+
 ## [0.6.0](https://github.com/officialunofficial/og/compare/v0.5.1...v0.6.0) (2026-11-10)
 
 
