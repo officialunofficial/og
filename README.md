@@ -77,6 +77,11 @@ These timings come from `bun run bench` on `workerd`. Each is the p50 request ti
 
 Most of the render time is PNG encoding, and gradients make it much slower.
 
+Cloudflare Workers analytics measured CPU time for a deployed example worker. It served 127
+requests across the four cards above. The p50 was 28 ms and the p99 was 217 ms. These
+numbers include cold starts and the first render of each card, so they are higher than the
+`bench` timings. Expect a warm render to cost less.
+
 - Cache the response with `cachedResponse`. A cache hit costs no render time.
 - Prefer flat colors. They render 2.7 times faster than gradients and shadows.
 - Keep `scale` at 1 unless you need Retina output. `scale: 2` costs about 3 times more.
