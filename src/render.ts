@@ -60,6 +60,9 @@ const CONTENT_TYPES: Record<OgImageFormat, string> = {
   webp: "image/webp",
 };
 
+/** Emoji image sets that {@link RenderOptions.emoji} can draw from. */
+export type EmojiSet = "twemoji" | "blobmoji" | "noto" | "openmoji" | "fluent" | "fluentFlat";
+
 /** Options for {@link renderOgImage}. */
 export type RenderOptions = {
   fonts: LoadedFont[];
@@ -72,6 +75,12 @@ export type RenderOptions = {
   format?: OgImageFormat;
   /** `Cache-Control` header on the response. Defaults to a year, immutable. */
   cacheControl?: string;
+  /**
+   * Draws emoji as images from this set, fetched from a CDN at render time.
+   * The renderer has no emoji font, so without this option emoji show as empty
+   * boxes. Needs the optional `@takumi-rs/helpers` peer dependency.
+   */
+  emoji?: EmojiSet;
 };
 
 // The wasm binary is instantiated once per isolate and shared by every render.
@@ -114,12 +123,28 @@ export async function renderOgImage(html: string, options: RenderOptions): Promi
 
   const format = options.format ?? "png";
   const scale = options.scale ?? 1;
-  const body = await engine.render(html, {
+  const renderOptions = {
     width: (options.width ?? OG_WIDTH) * scale,
     height: (options.height ?? OG_HEIGHT) * scale,
     devicePixelRatio: scale,
     format,
-  });
+  };
+
+  const body = await (async () => {
+    if (!options.emoji) return engine.render(html, renderOptions);
+
+    // Emoji become image nodes, and prepare() downloads those images first.
+    const [{ fromHtml }, { extractEmojis }] = await Promise.all([
+      import("@takumi-rs/helpers/html"),
+      import("@takumi-rs/helpers/emoji"),
+    ]);
+    const parsed = fromHtml(html);
+    const prepared = await engine.prepare(extractEmojis(parsed.node, options.emoji), {
+      ...renderOptions,
+      css: parsed.css,
+    });
+    return engine.render(prepared, renderOptions);
+  })();
   return new Response(body, {
     status: 200,
     headers: {

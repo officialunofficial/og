@@ -1,0 +1,27 @@
+name: Bench
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# The timings are for people to read. They never fail the build.
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+      - run: bun link
+      - name: Install example worker dependencies
+        working-directory: examples/worker
+        run: |
+          bun link @officialunofficial/og
+          bun install
+      - name: Time the renderer on workerd
+        run: bun run bench 30
