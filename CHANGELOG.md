@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/officialunofficial/og/compare/v0.6.1...v0.7.0) (2026-11-10)
+
+
+### Features
+
+* add emoji option, benchmark, and agent guide ([#15](https://github.com/officialunofficial/og/issues/15)) ([f60e9e2](https://github.com/officialunofficial/og/commit/f60e9e2faa1bb095b0188a5d6a2386dc50924572))
+
 ## [0.6.1](https://github.com/officialunofficial/og/compare/v0.6.0...v0.6.1) (2026-11-10)
 
 
