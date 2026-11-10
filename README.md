@@ -4,10 +4,10 @@ Primitives for Open Graph metadata and card images on Fetch-API edge runtimes.
 You bring the design; this package brings the layout DSL and render plumbing.
 
 ```sh
-bun add @officialunofficial/og workers-og
+bun add @officialunofficial/og @takumi-rs/wasm
 ```
 
-`workers-og` is a peer dependency, so you own the one copy bundled into your worker.
+`@takumi-rs/wasm` is a peer dependency, so you own the one copy bundled into your worker.
 
 ## Quick start
 
@@ -38,7 +38,7 @@ export default {
 - `svgToDataUri`, `toDataUri`, `stopColors`, `truncate` — asset and text helpers. Images must be data URIs.
 - `openGraphMetaTags`, `videoMetaTags`, `metaTags` — `<meta>` generation. See [docs/metadata.md](docs/metadata.md).
 
-**`@officialunofficial/og/render`** — loads `workers-og`.
+**`@officialunofficial/og/render`** — loads the Takumi wasm renderer.
 
 - `renderOgImage(html, options)` — markup to a cached PNG `Response`.
 - `loadGoogleFonts(specs)` — fetch fonts in parallel.
