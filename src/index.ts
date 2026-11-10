@@ -11,6 +11,8 @@ export { Box, HStack, Img, Text, VStack } from "./primitives.js";
 export type { Style, StyleValue } from "./primitives.js";
 export { stopColors, svgToDataUri, toDataUri } from "./assets.js";
 export { truncate } from "./text.js";
+export { cachedResponse } from "./cache.js";
+export type { CacheOptions, CacheStatus } from "./cache.js";
 export { videoMetaTags } from "./metadata.js";
 export type { OgPoster, OgVideo, VideoMetadataOptions } from "./metadata.js";
 export { openGraphMetaTags, OG_PROPERTIES } from "./open-graph.js";

@@ -36,6 +36,7 @@ export default {
 
 - `Box`, `VStack`, `HStack`, `Text`, `Img` — flex-box layout DSL. Every box is `display:flex`.
 - `svgToDataUri`, `toDataUri`, `stopColors`, `truncate` — asset and text helpers. Images must be data URIs.
+- `cachedResponse(request, render, options)` — Cache API wrapper with stale-while-revalidate. See below.
 - `openGraphMetaTags`, `videoMetaTags`, `metaTags` — `<meta>` generation. See [docs/metadata.md](docs/metadata.md).
 
 **`@officialunofficial/og/render`** — loads the Takumi wasm renderer.
@@ -45,6 +46,27 @@ export default {
 - `OG_WIDTH`, `OG_HEIGHT` — 1200×630.
 
 A working worker lives in [examples/worker](examples/worker).
+
+## Caching
+
+Rendering costs 5–30 ms of CPU; a cache hit costs none. `cachedResponse` serves
+fresh entries directly, serves stale ones instantly while re-rendering in the
+background, and renders concurrent misses once.
+
+```ts
+export default {
+  fetch: (request: Request, _env: unknown, ctx: ExecutionContext) =>
+    cachedResponse(request, () => renderCard(request), {
+      waitUntil: ctx.waitUntil.bind(ctx),
+      maxAge: 3600, // serve without revalidating for 1 hour
+      staleWhileRevalidate: 86_400, // then serve stale and refresh for 1 day
+    }),
+};
+```
+
+The key is the full request URL, so put every input that changes the card in
+the query string. Only successful `GET` responses are stored; the
+`X-Og-Cache` header reports `HIT`, `STALE`, `MISS` or `BYPASS`.
 
 ## Development
 
