@@ -72,7 +72,7 @@ the query string. Only successful `GET` responses are stored; the
 
 ```sh
 bun install
-bun run check   # lint, format, typecheck, test, build, package checks
+bun run verify  # lint, format, typecheck, test, build, package checks
 ```
 
 Releases are automated with release-please from Conventional Commits; publishing to
