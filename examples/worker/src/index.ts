@@ -60,28 +60,29 @@ async function renderDiagram(): Promise<Response> {
   return renderOgImage(html, { fonts, width: WIDTH, height: HEIGHT });
 }
 
+async function stage<T>(fn: () => Promise<T>): Promise<[T, number]> {
+  const start = performance.now();
+  const value = await fn();
+  return [value, performance.now() - start];
+}
+
 /** Times each render stage so speed claims stay checkable: `GET /bench?runs=20`. */
 async function bench(runs: number): Promise<Response> {
   const html = VStack(
     { width: OG_WIDTH, height: OG_HEIGHT, padding: 60, backgroundColor: "#101014" },
     Text({ fontSize: 64, fontWeight: 700, color: "#fafafa" }, "Benchmark card"),
   );
-  const stage = async <T>(fn: () => Promise<T>): Promise<[T, number]> => {
-    const start = performance.now();
-    const value = await fn();
-    return [value, performance.now() - start];
-  };
-
   const [fonts, fontMs] = await stage(() => loadGoogleFonts([{ family: "Inter", weight: 700 }]));
   const times: number[] = [];
   let bytes = 0;
   // Sequential on purpose: each run must not overlap the previous one.
-  // oxlint-disable-next-line no-await-in-loop
+  /* oxlint-disable no-await-in-loop */
   for (let i = 0; i < runs; i++) {
     const [res, ms] = await stage(() => renderOgImage(html, { fonts }));
     bytes = (await res.arrayBuffer()).byteLength;
     times.push(ms);
   }
+  /* oxlint-enable no-await-in-loop */
   const [cold = 0, ...warm] = times;
   warm.sort((a, b) => a - b);
   const pick = (p: number) => warm[Math.min(warm.length - 1, Math.floor(warm.length * p))] ?? 0;

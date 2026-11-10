@@ -5,14 +5,13 @@
   "scripts": {
     "dev": "wrangler dev",
     "build": "wrangler deploy --dry-run --outdir dist",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "bun check"
   },
   "dependencies": {
     "@officialunofficial/og": "link:@officialunofficial/og",
     "@takumi-rs/wasm": "^2.20.0"
   },
   "devDependencies": {
-    "typescript": "^7.0.2",
     "wrangler": "^4.95.0"
   }
 }

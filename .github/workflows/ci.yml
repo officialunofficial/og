@@ -14,7 +14,7 @@ jobs:
         with:
           bun-version-file: package.json
       - run: bun install --frozen-lockfile
-      - run: bun run check
+      - run: bun run verify
       - name: Link the package for the example worker
         run: bun link
       - name: Install example worker dependencies
